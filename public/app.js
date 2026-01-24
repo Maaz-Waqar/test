@@ -45,10 +45,9 @@ function connectToServer() {
   });
   
   socket.on('chat-start', (data) => {
-    updateStatus(`Connected with ${data.partnerName}`);
+    updateStatus('You are matched randomly');
     hideWaitingArea();
     enableChat();
-    addSystemMessage(`You're now chatting with ${data.partnerName}`);
   });
   
   socket.on('receive-message', (data) => {
@@ -148,6 +147,7 @@ function addMessage(text, type, sender) {
   senderEl.textContent = sender;
   
   const textEl = document.createElement('div');
+  textEl.className = 'text';
   textEl.textContent = text;
   
   messageEl.appendChild(senderEl);

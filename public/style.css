@@ -171,8 +171,8 @@ input[type="text"]:focus {
 }
 
 .chat-header {
-  background: #152035;
-  padding: 20px;
+  background: transparent;
+  padding: 25px 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -181,9 +181,9 @@ input[type="text"]:focus {
 }
 
 #status {
-  color: #ff5068;
-  font-weight: 600;
-  font-size: 18px;
+  color: #9ca3af;
+  font-weight: 400;
+  font-size: 16px;
 }
 
 .skip-btn {
@@ -244,31 +244,45 @@ input[type="text"]:focus {
 }
 
 .message {
-  margin-bottom: 15px;
-  padding: 12px 16px;
-  border-radius: 8px;
+  margin-bottom: 20px;
   max-width: 70%;
   word-wrap: break-word;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.message .sender {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
+  margin-bottom: 5px;
+}
+
+.message .text {
+  padding: 12px 16px;
+  border-radius: 8px;
+  width: fit-content;
 }
 
 .message.own {
-  background: #ff5068;
+  align-items: flex-end;
   margin-left: auto;
-  text-align: right;
+}
+
+.message.own .text {
+  background: #ff5068;
   color: white;
 }
 
 .message.partner {
-  background: #1a2942;
+  align-items: flex-start;
   margin-right: auto;
-  color: #e0e0e0;
 }
 
-.message .sender {
-  font-size: 12px;
-  opacity: 0.7;
-  margin-bottom: 5px;
-  font-weight: 600;
+.message.partner .text {
+  background: #1a2942;
+  color: #e0e0e0;
 }
 
 .system-message {
