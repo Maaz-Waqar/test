@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Chat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="age-gate" class="modal">
+    <div class="modal-content">
+      <h2>Are you 18 or older?</h2>
+      <p>You must be 18+ to use this chat</p>
+      <button onclick="confirmAge()" class="primary-btn">Yes, I am Over 18</button>
+      <button onclick="rejectAge()" class="secondary-btn">No, Take me Back</button>
+    </div>
+  </div>
+
+  <div id="username-screen" class="screen hidden">
+    <div class="center-box">
+      <h1>Random Chat</h1>
+      <input type="text" id="username-input" placeholder="Enter username" maxlength="20">
+      <button onclick="startChat()" class="primary-btn">Start Chatting</button>
+    </div>
+  </div>
+
+  <div id="chat-screen" class="screen hidden">
+    <button class="hamburger-menu" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="ad-space">ADVERTISEMENT</div>
+
+    <div class="chat-header">
+      <div id="status">Looking for someone...</div>
+      <button id="skip-btn" onclick="skipPartner()" class="skip-btn">Skip</button>
+    </div>
+
+    <div id="waiting-message" class="waiting-area">
+      <div class="waiting-text">Waiting for a partner</div>
+      <div class="lost-found-hint">Someone left a Lost and Found message that might be for you! Check the menu.</div>
+    </div>
+    
+    <div id="messages"></div>
+    
+    <div class="interest-tags" id="interest-tags"></div>
+
+    <div class="chat-input-area">
+      <div class="interest-input-container">
+        <input type="text" id="interest-input" placeholder="Add interest (Max 5)..." maxlength="40">
+        <button onclick="addInterest()" class="add-btn">Add</button>
+      </div>
+      <div class="message-input-container">
+        <input type="text" id="message-input" placeholder="Type a message..." disabled>
+        <button id="send-btn" onclick="sendMessage()" disabled class="send-btn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sidebar" class="sidebar">
+    <div class="sidebar-content">
+      <h3>Menu</h3>
+      <button onclick="closeMenu()" class="close-sidebar">×</button>
+      <div class="menu-items">
+        <div class="menu-item">Profile</div>
+        <div class="menu-item">Chat History</div>
+        <div class="menu-item">Lost and Found</div>
+        <div class="menu-item">Go Premium</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
