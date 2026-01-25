@@ -441,3 +441,28 @@ input[type="text"]:focus {
 .menu-item:hover {
   background: #223552;
 }
+
+.history-list {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #2a3f5f;
+}
+
+.history-item {
+  padding: 12px;
+  background: #1a2942;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.history-item .partner {
+  color: #ff5068;
+  font-weight: 600;
+}
+
+.history-item .time {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 5px;
+}

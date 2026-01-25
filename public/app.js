@@ -1,6 +1,8 @@
 let socket;
 let currentUsername = '';
 let interests = [];
+let guestId = '';
+let chatHistory = [];
 
 const adjectives = ['Happy', 'Brave', 'Swift', 'Calm', 'Bold', 'Wise', 'Fierce', 'Kind', 'Wild', 'Free', 'Cool', 'Lost', 'Hidden', 'Silent', 'Bright', 'Dark', 'Lucky', 'Epic', 'Mystic', 'Noble'];
 const nouns = ['Tiger', 'Eagle', 'Wolf', 'Lion', 'Bear', 'Hawk', 'Fox', 'Dragon', 'Phoenix', 'Raven', 'Storm', 'Shadow', 'Thunder', 'Ocean', 'Mountain', 'River', 'Moon', 'Star', 'Sun', 'Wind'];
@@ -11,8 +13,60 @@ function generateUsername() {
   return `${adj}${noun}`;
 }
 
+function generateGuestId() {
+  return 'guest_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
+}
+
+function loadGuestSession() {
+  const session = localStorage.getItem('guestSession');
+  if (session) {
+    const data = JSON.parse(session);
+    guestId = data.guestId;
+    currentUsername = data.username;
+    interests = data.interests || [];
+    chatHistory = data.chatHistory || [];
+    return true;
+  }
+  return false;
+}
+
+function saveGuestSession() {
+  const session = {
+    guestId: guestId,
+    username: currentUsername,
+    interests: interests,
+    chatHistory: chatHistory
+  };
+  localStorage.setItem('guestSession', JSON.stringify(session));
+}
+
+function addToChatHistory(partnerName) {
+  const timestamp = new Date().toLocaleString();
+  chatHistory.unshift({ partner: partnerName, time: timestamp });
+  if (chatHistory.length > 5) {
+    chatHistory = chatHistory.slice(0, 5);
+  }
+  saveGuestSession();
+}
+
+// Check for existing session on load
+window.addEventListener('DOMContentLoaded', () => {
+  if (loadGuestSession()) {
+    // Skip age gate and username screen, go straight to chat
+    document.getElementById('age-gate').classList.add('hidden');
+    document.getElementById('username-screen').classList.add('hidden');
+    document.getElementById('chat-screen').classList.remove('hidden');
+    renderInterests();
+    connectToServer();
+  }
+});
+
 function confirmAge() {
-  currentUsername = generateUsername();
+  // Generate new guest session only if doesn't exist
+  if (!guestId) {
+    guestId = generateGuestId();
+    currentUsername = generateUsername();
+  }
   document.getElementById('username-input').value = currentUsername;
   document.getElementById('age-gate').classList.add('hidden');
   document.getElementById('username-screen').classList.remove('hidden');
@@ -26,9 +80,12 @@ function startChat() {
   const usernameInput = document.getElementById('username-input').value.trim();
   currentUsername = usernameInput || currentUsername;
   
+  saveGuestSession();
+  
   document.getElementById('username-screen').classList.add('hidden');
   document.getElementById('chat-screen').classList.remove('hidden');
   
+  renderInterests();
   connectToServer();
 }
 
@@ -48,6 +105,7 @@ function connectToServer() {
     updateStatus('You are matched randomly');
     hideWaitingArea();
     enableChat();
+    addToChatHistory(data.partnerName);
   });
   
   socket.on('receive-message', (data) => {
@@ -96,6 +154,7 @@ function addInterest() {
     interests.push(interest);
     renderInterests();
     renderCurrentInterests();
+    saveGuestSession();
     input.value = '';
   }
 }
@@ -104,6 +163,7 @@ function removeInterest(index) {
   interests.splice(index, 1);
   renderInterests();
   renderCurrentInterests();
+  saveGuestSession();
 }
 
 function renderInterests() {
@@ -143,6 +203,34 @@ function openInterestPopup() {
 
 function closeInterestPopup() {
   document.getElementById('interest-popup').classList.add('hidden');
+}
+
+function logout() {
+  if (confirm('Are you sure you want to logout? Your guest session will be cleared.')) {
+    localStorage.removeItem('guestSession');
+    location.reload();
+  }
+}
+
+function showChatHistory() {
+  const historyList = document.getElementById('history-list');
+  historyList.innerHTML = '<h4 style="color: #ff5068; margin-bottom: 15px;">Recent Chats</h4>';
+  
+  if (chatHistory.length === 0) {
+    historyList.innerHTML += '<p style="color: #6b7280; font-size: 14px;">No chat history yet</p>';
+  } else {
+    chatHistory.forEach(chat => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+      item.innerHTML = `
+        <div class="partner">${chat.partner}</div>
+        <div class="time">${chat.time}</div>
+      `;
+      historyList.appendChild(item);
+    });
+  }
+  
+  historyList.classList.remove('hidden');
 }
 
 function toggleMenu() {
