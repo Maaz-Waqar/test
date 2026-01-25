@@ -466,3 +466,28 @@ input[type="text"]:focus {
   font-size: 12px;
   margin-top: 5px;
 }
+
+.back-btn {
+  background: #1a2942;
+  color: #ff5068;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.back-btn:hover {
+  background: #223552;
+}
+
+.history-item {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.history-item:hover {
+  transform: translateX(5px);
+  background: #223552;
+}

@@ -3,6 +3,9 @@ let currentUsername = '';
 let interests = [];
 let guestId = '';
 let chatHistory = [];
+let currentChatMessages = [];
+let currentPartner = '';
+let isReconnecting = false;
 
 const adjectives = ['Happy', 'Brave', 'Swift', 'Calm', 'Bold', 'Wise', 'Fierce', 'Kind', 'Wild', 'Free', 'Cool', 'Lost', 'Hidden', 'Silent', 'Bright', 'Dark', 'Lucky', 'Epic', 'Mystic', 'Noble'];
 const nouns = ['Tiger', 'Eagle', 'Wolf', 'Lion', 'Bear', 'Hawk', 'Fox', 'Dragon', 'Phoenix', 'Raven', 'Storm', 'Shadow', 'Thunder', 'Ocean', 'Mountain', 'River', 'Moon', 'Star', 'Sun', 'Wind'];
@@ -42,12 +45,55 @@ function saveGuestSession() {
 
 function addToChatHistory(partnerName) {
   const timestamp = new Date().toLocaleString();
-  chatHistory.unshift({ partner: partnerName, time: timestamp });
+  const chatId = Date.now().toString();
+  
+  const chatRecord = {
+    id: chatId,
+    partner: partnerName,
+    time: timestamp,
+    messages: [...currentChatMessages]
+  };
+  
+  chatHistory.unshift(chatRecord);
   if (chatHistory.length > 5) {
     chatHistory = chatHistory.slice(0, 5);
   }
   saveGuestSession();
 }
+
+function saveChatMessage(text, sender, type) {
+  currentChatMessages.push({
+    text: text,
+    sender: sender,
+    type: type,
+    timestamp: new Date().toLocaleString()
+  });
+}
+
+// Handle page visibility changes
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    // User switched tab or minimized
+    if (socket && socket.connected && currentPartner) {
+      socket.emit('user-away');
+    }
+  } else {
+    // User came back
+    if (socket && socket.connected && currentPartner) {
+      socket.emit('user-back');
+    } else if (!socket || !socket.connected) {
+      // Reconnect if disconnected
+      attemptReconnect();
+    }
+  }
+});
+
+// Handle before unload (closing tab/refresh)
+window.addEventListener('beforeunload', () => {
+  if (socket && currentPartner) {
+    socket.emit('user-away');
+  }
+});
 
 // Check for existing session on load
 window.addEventListener('DOMContentLoaded', () => {
@@ -93,7 +139,15 @@ function connectToServer() {
   socket = io();
   
   socket.on('connect', () => {
+    console.log('Connected to server');
+    isReconnecting = false;
     socket.emit('find-partner', currentUsername);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+    addSystemMessage('Connection lost. Reconnecting...');
+    attemptReconnect();
   });
   
   socket.on('waiting', () => {
@@ -102,29 +156,61 @@ function connectToServer() {
   });
   
   socket.on('chat-start', (data) => {
+    currentPartner = data.partnerName;
+    currentChatMessages = [];
     updateStatus('You are matched randomly');
     hideWaitingArea();
     enableChat();
-    addToChatHistory(data.partnerName);
   });
   
   socket.on('receive-message', (data) => {
     if (data.sender !== currentUsername) {
       addMessage(data.message, 'partner', data.sender);
+      saveChatMessage(data.message, data.sender, 'partner');
     }
   });
   
   socket.on('partner-left', () => {
     addSystemMessage('Partner disconnected');
+    if (currentPartner && currentChatMessages.length > 0) {
+      addToChatHistory(currentPartner);
+    }
+    currentPartner = '';
+    currentChatMessages = [];
     disableChat();
     updateStatus('Partner left. Click Skip to find another.');
   });
   
+  socket.on('partner-away', () => {
+    addSystemMessage('Partner went offline (switched tab or lost connection)');
+  });
+  
+  socket.on('partner-back', () => {
+    addSystemMessage('Partner is back online');
+  });
+  
   socket.on('skipped', () => {
+    if (currentPartner && currentChatMessages.length > 0) {
+      addToChatHistory(currentPartner);
+    }
+    currentPartner = '';
+    currentChatMessages = [];
     clearMessages();
     showWaitingArea();
     socket.emit('find-partner', currentUsername);
   });
+}
+
+function attemptReconnect() {
+  if (isReconnecting) return;
+  isReconnecting = true;
+  
+  setTimeout(() => {
+    if (!socket || !socket.connected) {
+      addSystemMessage('Attempting to reconnect...');
+      connectToServer();
+    }
+  }, 2000);
 }
 
 function sendMessage() {
@@ -134,6 +220,7 @@ function sendMessage() {
   if (message && socket) {
     socket.emit('send-message', message);
     addMessage(message, 'own', 'You');
+    saveChatMessage(message, currentUsername, 'own');
     input.value = '';
   }
 }
@@ -213,8 +300,15 @@ function logout() {
 }
 
 function showChatHistory() {
+  const menuItems = document.querySelector('.menu-items');
   const historyList = document.getElementById('history-list');
-  historyList.innerHTML = '<h4 style="color: #ff5068; margin-bottom: 15px;">Recent Chats</h4>';
+  
+  // Hide main menu
+  menuItems.style.display = 'none';
+  
+  // Show history
+  historyList.innerHTML = '<button onclick="backToMenu()" class="back-btn">← Go Back</button>';
+  historyList.innerHTML += '<h4 style="color: #ff5068; margin: 20px 0 15px 0;">Recent Chats</h4>';
   
   if (chatHistory.length === 0) {
     historyList.innerHTML += '<p style="color: #6b7280; font-size: 14px;">No chat history yet</p>';
@@ -222,15 +316,50 @@ function showChatHistory() {
     chatHistory.forEach(chat => {
       const item = document.createElement('div');
       item.className = 'history-item';
+      item.onclick = () => viewChat(chat);
       item.innerHTML = `
         <div class="partner">${chat.partner}</div>
         <div class="time">${chat.time}</div>
+        <div style="color: #6b7280; font-size: 12px; margin-top: 5px;">${chat.messages.length} messages</div>
       `;
       historyList.appendChild(item);
     });
   }
   
   historyList.classList.remove('hidden');
+}
+
+function viewChat(chat) {
+  const historyList = document.getElementById('history-list');
+  
+  historyList.innerHTML = '<button onclick="showChatHistory()" class="back-btn">← Back to History</button>';
+  historyList.innerHTML += `<h4 style="color: #ff5068; margin: 20px 0 15px 0;">Chat with ${chat.partner}</h4>`;
+  historyList.innerHTML += `<p style="color: #6b7280; font-size: 12px; margin-bottom: 15px;">${chat.time}</p>`;
+  
+  const messagesContainer = document.createElement('div');
+  messagesContainer.style.cssText = 'max-height: 400px; overflow-y: auto; background: #0f1d33; padding: 15px; border-radius: 6px;';
+  
+  chat.messages.forEach(msg => {
+    const msgEl = document.createElement('div');
+    msgEl.style.cssText = `margin-bottom: 12px; ${msg.type === 'own' ? 'text-align: right;' : 'text-align: left;'}`;
+    msgEl.innerHTML = `
+      <div style="font-size: 11px; color: #6b7280; margin-bottom: 3px;">${msg.sender}</div>
+      <div style="display: inline-block; padding: 8px 12px; border-radius: 6px; background: ${msg.type === 'own' ? '#ff5068' : '#1a2942'}; color: white; max-width: 80%;">
+        ${msg.text}
+      </div>
+    `;
+    messagesContainer.appendChild(msgEl);
+  });
+  
+  historyList.appendChild(messagesContainer);
+}
+
+function backToMenu() {
+  const menuItems = document.querySelector('.menu-items');
+  const historyList = document.getElementById('history-list');
+  
+  menuItems.style.display = 'flex';
+  historyList.classList.add('hidden');
 }
 
 function toggleMenu() {
