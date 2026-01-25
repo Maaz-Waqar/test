@@ -95,6 +95,7 @@ function addInterest() {
   if (interest && interests.length < 5) {
     interests.push(interest);
     renderInterests();
+    renderCurrentInterests();
     input.value = '';
   }
 }
@@ -102,6 +103,7 @@ function addInterest() {
 function removeInterest(index) {
   interests.splice(index, 1);
   renderInterests();
+  renderCurrentInterests();
 }
 
 function renderInterests() {
@@ -117,6 +119,30 @@ function renderInterests() {
     `;
     container.appendChild(tag);
   });
+}
+
+function renderCurrentInterests() {
+  const container = document.getElementById('current-interests');
+  container.innerHTML = '';
+  
+  interests.forEach((interest, index) => {
+    const tag = document.createElement('div');
+    tag.className = 'interest-tag';
+    tag.innerHTML = `
+      ${interest}
+      <span class="remove" onclick="removeInterest(${index})">×</span>
+    `;
+    container.appendChild(tag);
+  });
+}
+
+function openInterestPopup() {
+  renderCurrentInterests();
+  document.getElementById('interest-popup').classList.remove('hidden');
+}
+
+function closeInterestPopup() {
+  document.getElementById('interest-popup').classList.add('hidden');
 }
 
 function toggleMenu() {

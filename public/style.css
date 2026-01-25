@@ -177,7 +177,6 @@ input[type="text"]:focus {
   justify-content: center;
   align-items: center;
   border-bottom: 1px solid #1e3050;
-  position: relative;
 }
 
 #status {
@@ -187,20 +186,7 @@ input[type="text"]:focus {
 }
 
 .skip-btn {
-  position: absolute;
-  right: 20px;
-  padding: 10px 25px;
-  background: #ff5068;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.skip-btn:hover {
-  background: #e6445a;
+  display: none;
 }
 
 .waiting-area {
@@ -218,14 +204,6 @@ input[type="text"]:focus {
 .waiting-text {
   color: #9ca3af;
   font-size: 20px;
-  margin-bottom: 30px;
-}
-
-.lost-found-hint {
-  color: #6b7280;
-  font-style: italic;
-  font-size: 14px;
-  max-width: 500px;
 }
 
 #messages {
@@ -295,15 +273,15 @@ input[type="text"]:focus {
 
 .interest-tags {
   background: #0a1628;
-  padding: 15px 20px;
+  padding: 10px 20px;
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
   border-top: 1px solid #1e3050;
-  min-height: 60px;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  min-height: 40px;
 }
 
 .interest-tag {
@@ -323,47 +301,42 @@ input[type="text"]:focus {
   font-size: 16px;
 }
 
+.current-interests {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .chat-input-area {
   background: #0a1628;
   border-top: 1px solid #1e3050;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-}
-
-.interest-input-container {
-  display: flex;
-  gap: 10px;
   padding: 15px 20px;
-  border-bottom: 1px solid #1e3050;
 }
 
-.interest-input-container input {
-  flex: 1;
-  margin: 0;
-  background: #152035;
+.add-interest-btn {
+  background: transparent;
   border: 1px solid #2a3f5f;
-}
-
-.add-btn {
-  padding: 12px 30px;
-  background: #ff5068;
-  color: white;
-  border: none;
+  color: #9ca3af;
+  padding: 10px 20px;
   border-radius: 4px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
+  margin-bottom: 10px;
+  width: fit-content;
 }
 
-.add-btn:hover {
-  background: #e6445a;
+.add-interest-btn:hover {
+  border-color: #ff5068;
+  color: #ff5068;
 }
 
 .message-input-container {
   display: flex;
   gap: 10px;
-  padding: 15px 20px;
 }
 
 .message-input-container input {
@@ -371,6 +344,21 @@ input[type="text"]:focus {
   margin: 0;
   background: #152035;
   border: 1px solid #2a3f5f;
+}
+
+.skip-btn-bottom {
+  padding: 12px 25px;
+  background: #2a3f5f;
+  color: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.skip-btn-bottom:hover {
+  background: #3a4f6f;
 }
 
 .send-btn {
