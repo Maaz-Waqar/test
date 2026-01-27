@@ -31,32 +31,49 @@
       <span></span>
     </button>
 
-    <div class="ad-space">ADVERTISEMENT</div>
+    <div class="ad-space-top">ADVERTISEMENT</div>
 
-    <div class="chat-header">
-      <div id="status">Looking for someone...</div>
-    </div>
+    <div class="chat-container">
+      <div class="chat-main">
+        <div class="chat-header">
+          <div id="status">Looking for someone...</div>
+        </div>
 
-    <div id="waiting-message" class="waiting-area">
-      <div class="waiting-text">Waiting for a partner</div>
-    </div>
-    
-    <div id="messages"></div>
-    
-    <div class="interest-tags" id="interest-tags"></div>
+        <div class="ad-space-mobile">
+          <div class="ad-placeholder">AD SPACE (320x100)</div>
+        </div>
 
-    <div class="chat-input-area">
-      <div class="auto-find-container">
-        <label class="auto-find-label">
-          <input type="checkbox" id="auto-find-checkbox" onchange="toggleAutoFind()">
-          <span>Auto-find next partner when current chat ends</span>
-        </label>
+        <div id="waiting-message" class="waiting-area">
+          <div class="waiting-text">Waiting for a partner</div>
+          <div class="ad-space-waiting">
+            <div class="ad-placeholder">AD SPACE (300x250)</div>
+          </div>
+        </div>
+        
+        <div id="messages"></div>
+        
+        <div class="interest-tags" id="interest-tags"></div>
+
+        <div class="chat-input-area">
+          <div class="auto-find-container">
+            <label class="auto-find-label">
+              <input type="checkbox" id="auto-find-checkbox" onchange="toggleAutoFind()">
+              <span>Auto-find next partner when current chat ends</span>
+            </label>
+          </div>
+          <button onclick="openInterestPopup()" class="add-interest-btn">+ Add Interests</button>
+          <div class="message-input-container">
+            <input type="text" id="message-input" placeholder="Type a message..." disabled>
+            <button id="skip-btn" onclick="skipPartner()" class="skip-btn-bottom">Skip</button>
+            <button id="send-btn" onclick="sendMessage()" disabled class="send-btn">Send</button>
+          </div>
+        </div>
       </div>
-      <button onclick="openInterestPopup()" class="add-interest-btn">+ Add Interests</button>
-      <div class="message-input-container">
-        <input type="text" id="message-input" placeholder="Type a message..." disabled>
-        <button id="skip-btn" onclick="skipPartner()" class="skip-btn-bottom">Skip</button>
-        <button id="send-btn" onclick="sendMessage()" disabled class="send-btn">Send</button>
+
+      <div class="ad-space-sidebar">
+        <div class="ad-placeholder-sidebar">
+          AD SPACE<br>(300x600)
+        </div>
       </div>
     </div>
   </div>
