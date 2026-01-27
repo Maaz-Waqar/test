@@ -46,6 +46,12 @@
     <div class="interest-tags" id="interest-tags"></div>
 
     <div class="chat-input-area">
+      <div class="auto-find-container">
+        <label class="auto-find-label">
+          <input type="checkbox" id="auto-find-checkbox" onchange="toggleAutoFind()">
+          <span>Auto-find next partner when current chat ends</span>
+        </label>
+      </div>
       <button onclick="openInterestPopup()" class="add-interest-btn">+ Add Interests</button>
       <div class="message-input-container">
         <input type="text" id="message-input" placeholder="Type a message..." disabled>

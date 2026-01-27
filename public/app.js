@@ -6,6 +6,7 @@ let chatHistory = [];
 let currentChatMessages = [];
 let currentPartner = '';
 let isReconnecting = false;
+let autoFindNext = false;
 
 const adjectives = ['Happy', 'Brave', 'Swift', 'Calm', 'Bold', 'Wise', 'Fierce', 'Kind', 'Wild', 'Free', 'Cool', 'Lost', 'Hidden', 'Silent', 'Bright', 'Dark', 'Lucky', 'Epic', 'Mystic', 'Noble'];
 const nouns = ['Tiger', 'Eagle', 'Wolf', 'Lion', 'Bear', 'Hawk', 'Fox', 'Dragon', 'Phoenix', 'Raven', 'Storm', 'Shadow', 'Thunder', 'Ocean', 'Mountain', 'River', 'Moon', 'Star', 'Sun', 'Wind'];
@@ -28,6 +29,7 @@ function loadGuestSession() {
     currentUsername = data.username;
     interests = data.interests || [];
     chatHistory = data.chatHistory || [];
+    autoFindNext = data.autoFindNext || false;
     return true;
   }
   return false;
@@ -38,7 +40,8 @@ function saveGuestSession() {
     guestId: guestId,
     username: currentUsername,
     interests: interests,
-    chatHistory: chatHistory
+    chatHistory: chatHistory,
+    autoFindNext: autoFindNext
   };
   localStorage.setItem('guestSession', JSON.stringify(session));
 }
@@ -103,6 +106,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('username-screen').classList.add('hidden');
     document.getElementById('chat-screen').classList.remove('hidden');
     renderInterests();
+    document.getElementById('auto-find-checkbox').checked = autoFindNext;
     connectToServer();
   }
 });
@@ -178,7 +182,17 @@ function connectToServer() {
     currentPartner = '';
     currentChatMessages = [];
     disableChat();
-    updateStatus('Partner left. Click Skip to find another.');
+    
+    if (autoFindNext) {
+      updateStatus('Finding next partner...');
+      setTimeout(() => {
+        clearMessages();
+        showWaitingArea();
+        socket.emit('find-partner', currentUsername);
+      }, 1500);
+    } else {
+      updateStatus('Partner left. Click Skip to find another.');
+    }
   });
   
   socket.on('partner-away', () => {
@@ -360,6 +374,11 @@ function backToMenu() {
   
   menuItems.style.display = 'flex';
   historyList.classList.add('hidden');
+}
+
+function toggleAutoFind() {
+  autoFindNext = document.getElementById('auto-find-checkbox').checked;
+  saveGuestSession();
 }
 
 function toggleMenu() {
