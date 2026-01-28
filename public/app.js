@@ -385,16 +385,13 @@ function toggleAutoFind() {
 
 function updateHeaderInfo(partnerName) {
   document.getElementById('header-username').textContent = partnerName || 'Username';
-  const interestsText = interests.length > 0 ? interests.join(', ') : 'No interests';
-  document.getElementById('header-status').textContent = `Matched Randomly/with Interest ${interestsText}`;
+  const interestsText = interests.length > 0 ? `with Interest ${interests.join(', ')}` : '';
+  document.getElementById('header-status').textContent = `Matched Randomly${interestsText ? '/' + interestsText : ''}`;
 }
 
 function renderInterests() {
   const container = document.getElementById('interest-tags');
-  const inlineContainer = document.getElementById('interest-chips-inline');
-  
   container.innerHTML = '';
-  if (inlineContainer) inlineContainer.innerHTML = '';
   
   interests.forEach((interest, index) => {
     const tag = document.createElement('div');
@@ -404,11 +401,6 @@ function renderInterests() {
       <span class="remove" onclick="removeInterest(${index})">×</span>
     `;
     container.appendChild(tag);
-    
-    if (inlineContainer) {
-      const inlineTag = tag.cloneNode(true);
-      inlineContainer.appendChild(inlineTag);
-    }
   });
 }
 
