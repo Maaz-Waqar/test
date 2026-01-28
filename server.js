@@ -52,6 +52,26 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('user-away', () => {
+    const chatInfo = activeChats.get(socket.id);
+    if (chatInfo) {
+      const partner = io.sockets.sockets.get(chatInfo.partnerId);
+      if (partner) {
+        partner.emit('partner-away');
+      }
+    }
+  });
+
+  socket.on('user-back', () => {
+    const chatInfo = activeChats.get(socket.id);
+    if (chatInfo) {
+      const partner = io.sockets.sockets.get(chatInfo.partnerId);
+      if (partner) {
+        partner.emit('partner-back');
+      }
+    }
+  });
+
   socket.on('skip', () => {
     handleDisconnect(socket);
     socket.emit('skipped');
