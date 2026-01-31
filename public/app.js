@@ -162,7 +162,7 @@ function connectToServer() {
   socket.on('chat-start', (data) => {
     currentPartner = data.partnerName;
     currentChatMessages = [];
-    updateStatus('You are matched randomly');
+    updateHeaderInfo(data.partnerName);
     hideWaitingArea();
     enableChat();
   });
@@ -255,6 +255,7 @@ function addInterest() {
     interests.push(interest);
     renderInterests();
     renderCurrentInterests();
+    updateHeaderInfo(currentPartner);
     saveGuestSession();
     input.value = '';
   }
@@ -264,6 +265,7 @@ function removeInterest(index) {
   interests.splice(index, 1);
   renderInterests();
   renderCurrentInterests();
+  updateHeaderInfo(currentPartner);
   saveGuestSession();
 }
 
@@ -379,6 +381,27 @@ function backToMenu() {
 function toggleAutoFind() {
   autoFindNext = document.getElementById('auto-find-checkbox').checked;
   saveGuestSession();
+}
+
+function updateHeaderInfo(partnerName) {
+  document.getElementById('header-username').textContent = partnerName || 'Username';
+  const interestsText = interests.length > 0 ? `with Interest ${interests.join(', ')}` : '';
+  document.getElementById('header-status').textContent = `Matched Randomly${interestsText ? '/' + interestsText : ''}`;
+}
+
+function renderInterests() {
+  const container = document.getElementById('interest-tags');
+  container.innerHTML = '';
+  
+  interests.forEach((interest, index) => {
+    const tag = document.createElement('div');
+    tag.className = 'interest-tag';
+    tag.innerHTML = `
+      ${interest}
+      <span class="remove" onclick="removeInterest(${index})">×</span>
+    `;
+    container.appendChild(tag);
+  });
 }
 
 function toggleMenu() {
