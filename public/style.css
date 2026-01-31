@@ -176,7 +176,7 @@ input[type="text"]:focus {
   display: flex;
   align-items: center;
   gap: 15px;
-  padding: 15px 20px;
+  padding: 15px 20px 15px 85px;
   background: #1a2942;
   border-bottom: 1px solid #2a3f5f;
   flex-shrink: 0;
@@ -219,11 +219,43 @@ input[type="text"]:focus {
   display: none;
 }
 
+.ad-mobile-bottom-banner {
+  background: #1a2942;
+  border: 2px dashed #2a3f5f;
+  color: #5a6c85;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px;
+  font-weight: 600;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .chat-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   min-height: 0;
+}
+
+.chat-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-content::-webkit-scrollbar-track {
+  background: #0f1d33;
+}
+
+.chat-content::-webkit-scrollbar-thumb {
+  background: #2a3f5f;
+  border-radius: 4px;
+}
+
+.chat-content::-webkit-scrollbar-thumb:hover {
+  background: #3a4f6f;
 }
 
 .waiting-area {
@@ -621,12 +653,10 @@ input[type="text"]:focus {
   }
   
   .ad-mobile-bottom {
-    display: flex;
+    display: block;
     background: #1a2942;
-    padding: 15px;
+    padding: 8px 15px;
     border-top: 1px solid #2a3f5f;
-    align-items: center;
-    justify-content: center;
   }
   
   .controls-row {
@@ -650,5 +680,21 @@ input[type="text"]:focus {
   .skip-btn,
   .send-btn {
     flex: 1;
+  }
+  
+  .user-header {
+    padding: 15px 20px 15px 85px;
+  }
+  
+  #messages {
+    display: block !important;
+  }
+  
+  #messages.active {
+    display: block !important;
+  }
+  
+  .waiting-area {
+    display: none;
   }
 }
