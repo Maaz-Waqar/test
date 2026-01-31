@@ -107,6 +107,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.getElementById('chat-screen').classList.remove('hidden');
     renderInterests();
     document.getElementById('auto-find-checkbox').checked = autoFindNext;
+    updateHeaderInfo(null, true);
     connectToServer();
   }
 });
@@ -383,10 +384,15 @@ function toggleAutoFind() {
   saveGuestSession();
 }
 
-function updateHeaderInfo(partnerName) {
-  document.getElementById('header-username').textContent = partnerName || 'Username';
-  const interestsText = interests.length > 0 ? `with Interest ${interests.join(', ')}` : '';
-  document.getElementById('header-status').textContent = `Matched Randomly${interestsText ? '/' + interestsText : ''}`;
+function updateHeaderInfo(partnerName, isWaiting = false) {
+  if (isWaiting) {
+    document.getElementById('header-username').textContent = 'Looking for partner...';
+    document.getElementById('header-status').textContent = 'Searching for someone to chat with';
+  } else {
+    document.getElementById('header-username').textContent = partnerName || 'Username';
+    const interestsText = interests.length > 0 ? `with Interest ${interests.join(', ')}` : '';
+    document.getElementById('header-status').textContent = `Matched Randomly${interestsText ? '/' + interestsText : ''}`;
+  }
 }
 
 function renderInterests() {
@@ -438,7 +444,12 @@ function addMessage(text, type, sender) {
   messageEl.appendChild(senderEl);
   messageEl.appendChild(textEl);
   messagesDiv.appendChild(messageEl);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+  // Auto-scroll to bottom
+  const chatContent = document.querySelector('.chat-content');
+  if (chatContent) {
+    chatContent.scrollTop = chatContent.scrollHeight;
+  }
 }
 
 function addSystemMessage(text) {
@@ -447,7 +458,12 @@ function addSystemMessage(text) {
   messageEl.className = 'system-message';
   messageEl.textContent = text;
   messagesDiv.appendChild(messageEl);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  
+  // Auto-scroll to bottom
+  const chatContent = document.querySelector('.chat-content');
+  if (chatContent) {
+    chatContent.scrollTop = chatContent.scrollHeight;
+  }
 }
 
 function clearMessages() {

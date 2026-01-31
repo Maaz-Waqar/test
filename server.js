@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
       activeChats.set(socket.id, { partnerId: partner.id, roomId });
       activeChats.set(partner.id, { partnerId: socket.id, roomId });
       
+      // Send partner name only (no interests here, client handles display)
       socket.emit('chat-start', { partnerName: partner.username });
       partner.emit('chat-start', { partnerName: socket.username });
     } else {
