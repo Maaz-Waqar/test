@@ -356,6 +356,15 @@ input[type="text"]:focus {
   gap: 6px;
 }
 
+.interest-tag.more-tag {
+  cursor: pointer;
+  background: #2a3f5f;
+}
+
+.interest-tag.more-tag:hover {
+  background: #3a4f6f;
+}
+
 .interest-tag .remove {
   cursor: pointer;
   font-weight: bold;
@@ -646,10 +655,15 @@ input[type="text"]:focus {
   .ad-mobile-top {
     display: flex;
     background: #1a2942;
-    padding: 15px;
+    padding: 10px 15px;
     border-bottom: 1px solid #2a3f5f;
     align-items: center;
     justify-content: center;
+    min-height: 100px;
+  }
+  
+  .ad-mobile-top .ad-placeholder {
+    min-height: 80px;
   }
   
   .ad-mobile-bottom {
@@ -660,12 +674,27 @@ input[type="text"]:focus {
   }
   
   .controls-row {
-    margin-bottom: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+  
+  .interest-row {
+    margin-bottom: 8px;
+  }
+  
+  .add-interest-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+    white-space: nowrap;
   }
   
   .auto-find-label {
-    flex-basis: 100%;
-    font-size: 11px;
+    font-size: 10px;
+    gap: 6px;
+  }
+  
+  .auto-find-label span {
+    white-space: nowrap;
   }
   
   .input-row {

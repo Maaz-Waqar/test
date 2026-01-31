@@ -146,7 +146,7 @@ function connectToServer() {
   socket.on('connect', () => {
     console.log('Connected to server');
     isReconnecting = false;
-    socket.emit('find-partner', currentUsername);
+    socket.emit('find-partner', { username: currentUsername, interests: interests });
   });
   
   socket.on('disconnect', () => {
@@ -212,7 +212,7 @@ function connectToServer() {
     currentChatMessages = [];
     clearMessages();
     showWaitingArea();
-    socket.emit('find-partner', currentUsername);
+    socket.emit('find-partner', { username: currentUsername, interests: interests });
   });
 }
 
@@ -274,7 +274,10 @@ function renderInterests() {
   const container = document.getElementById('interest-tags');
   container.innerHTML = '';
   
-  interests.forEach((interest, index) => {
+  const isMobile = window.innerWidth < 1024;
+  const maxVisible = isMobile ? 2 : interests.length;
+  
+  interests.slice(0, maxVisible).forEach((interest, index) => {
     const tag = document.createElement('div');
     tag.className = 'interest-tag';
     tag.innerHTML = `
@@ -283,6 +286,14 @@ function renderInterests() {
     `;
     container.appendChild(tag);
   });
+  
+  if (isMobile && interests.length > 2) {
+    const moreTag = document.createElement('div');
+    moreTag.className = 'interest-tag more-tag';
+    moreTag.innerHTML = `+${interests.length - 2} Interest${interests.length - 2 > 1 ? 's' : ''}`;
+    moreTag.onclick = openInterestPopup;
+    container.appendChild(moreTag);
+  }
 }
 
 function renderCurrentInterests() {
@@ -384,14 +395,17 @@ function toggleAutoFind() {
   saveGuestSession();
 }
 
-function updateHeaderInfo(partnerName, isWaiting = false) {
+function updateHeaderInfo(partnerName, isWaiting = false, mutualInterests = []) {
   if (isWaiting) {
     document.getElementById('header-username').textContent = 'Looking for partner...';
     document.getElementById('header-status').textContent = 'Searching for someone to chat with';
   } else {
     document.getElementById('header-username').textContent = partnerName || 'Username';
-    const interestsText = interests.length > 0 ? `with Interest ${interests.join(', ')}` : '';
-    document.getElementById('header-status').textContent = `Matched Randomly${interestsText ? '/' + interestsText : ''}`;
+    if (mutualInterests.length > 0) {
+      document.getElementById('header-status').textContent = `Matched with Interest: ${mutualInterests.join(', ')}`;
+    } else {
+      document.getElementById('header-status').textContent = 'Matched Randomly';
+    }
   }
 }
 
@@ -433,15 +447,22 @@ function addMessage(text, type, sender) {
   const messageEl = document.createElement('div');
   messageEl.className = `message ${type}`;
   
-  const senderEl = document.createElement('div');
-  senderEl.className = 'sender';
-  senderEl.textContent = sender;
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  const timeStr = `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  
+  const headerEl = document.createElement('div');
+  headerEl.className = 'message-header';
+  headerEl.innerHTML = `<span class="sender">${sender}</span><span class="timestamp">${timeStr}</span>`;
   
   const textEl = document.createElement('div');
   textEl.className = 'text';
   textEl.textContent = text;
   
-  messageEl.appendChild(senderEl);
+  messageEl.appendChild(headerEl);
   messageEl.appendChild(textEl);
   messagesDiv.appendChild(messageEl);
   

@@ -20,8 +20,9 @@ let activeChats = new Map();
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  socket.on('find-partner', (username) => {
-    socket.username = username || 'Stranger';
+  socket.on('find-partner', (data) => {
+    socket.username = data.username || 'Stranger';
+    socket.interests = data.interests || [];
     
     // Filter out the user themselves from waiting list
     waitingUsers = waitingUsers.filter(user => user.id !== socket.id);
@@ -42,9 +43,19 @@ io.on('connection', (socket) => {
       activeChats.set(socket.id, { partnerId: partner.id, roomId });
       activeChats.set(partner.id, { partnerId: socket.id, roomId });
       
-      // Send partner name only (no interests here, client handles display)
-      socket.emit('chat-start', { partnerName: partner.username });
-      partner.emit('chat-start', { partnerName: socket.username });
+      // Find mutual interests
+      const mutualInterests = socket.interests.filter(interest => 
+        partner.interests && partner.interests.includes(interest)
+      );
+      
+      socket.emit('chat-start', { 
+        partnerName: partner.username,
+        mutualInterests: mutualInterests 
+      });
+      partner.emit('chat-start', { 
+        partnerName: socket.username,
+        mutualInterests: mutualInterests 
+      });
     } else {
       waitingUsers.push(socket);
       socket.emit('waiting');
