@@ -25,50 +25,67 @@
   </div>
 
   <div id="chat-screen" class="screen hidden">
-    <button class="hamburger-menu" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
+    <div class="main-container">
+      <button class="hamburger-menu" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
-    <div class="ad-space">ADVERTISEMENT</div>
+      <div class="chat-column">
+        <div class="user-header">
+          <div class="user-avatar">
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Ccircle cx='25' cy='25' r='25' fill='%23ff5068'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='white' font-size='20' font-family='Arial'%3EU%3C/text%3E%3C/svg%3E" alt="avatar">
+          </div>
+          <div class="user-info">
+            <div class="user-name" id="header-username">Username</div>
+            <div class="user-status" id="header-status">Matched Randomly</div>
+          </div>
+        </div>
 
-    <div class="chat-header">
-      <div id="status">Looking for someone...</div>
-    </div>
+        <div class="ad-mobile-top">
+          <div class="ad-placeholder">AD SPACE (300x250)</div>
+        </div>
 
-    <div id="waiting-message" class="waiting-area">
-      <div class="waiting-text">Waiting for a partner</div>
-    </div>
-    
-    <div id="messages"></div>
-    
-    <div class="interest-tags" id="interest-tags"></div>
+        <div class="chat-content">
+          <div id="waiting-message" class="waiting-area">
+            <div class="waiting-text">Waiting for a partner</div>
+          </div>
+          
+          <div id="messages"></div>
+        </div>
 
-    <div class="chat-input-area">
-      <div class="auto-find-container">
-        <label class="auto-find-label">
-          <input type="checkbox" id="auto-find-checkbox" onchange="toggleAutoFind()">
-          <span>Auto-find next partner when current chat ends</span>
-        </label>
+        <div class="chat-bottom">
+          <div class="interest-row" id="interest-tags"></div>
+          
+          <div class="controls-row">
+            <button onclick="openInterestPopup()" class="add-interest-btn">+ Add Interests</button>
+            <label class="auto-find-label">
+              <input type="checkbox" id="auto-find-checkbox" onchange="toggleAutoFind()">
+              <span>Auto-find next partner when current chat ends</span>
+            </label>
+          </div>
+
+          <div class="input-row">
+            <input type="text" id="message-input" placeholder="Type a message..." disabled>
+            <button id="skip-btn" onclick="skipPartner()" class="skip-btn">Skip</button>
+            <button id="send-btn" onclick="sendMessage()" disabled class="send-btn">Send</button>
+          </div>
+        </div>
+
+        <div class="ad-mobile-bottom">
+          <div class="ad-placeholder">AD SPACE (300x250)</div>
+        </div>
       </div>
-      <button onclick="openInterestPopup()" class="add-interest-btn">+ Add Interests</button>
-      <div class="message-input-container">
-        <input type="text" id="message-input" placeholder="Type a message..." disabled>
-        <button id="skip-btn" onclick="skipPartner()" class="skip-btn-bottom">Skip</button>
-        <button id="send-btn" onclick="sendMessage()" disabled class="send-btn">Send</button>
-      </div>
-    </div>
-  </div>
 
-  <div id="interest-popup" class="modal hidden">
-    <div class="modal-content">
-      <h2>Add Interests</h2>
-      <p>Add up to 5 interests (max 40 characters each)</p>
-      <input type="text" id="interest-input" placeholder="Type an interest..." maxlength="40">
-      <button onclick="addInterest()" class="primary-btn">Add</button>
-      <button onclick="closeInterestPopup()" class="secondary-btn">Done</button>
-      <div id="current-interests" class="current-interests"></div>
+      <div class="ad-sidebar">
+        <div class="ad-top-banner">
+          <div class="ad-placeholder-banner">AD SPACE (728x90)</div>
+        </div>
+        <div class="ad-right-panel">
+          <div class="ad-placeholder-panel">AD SPACE (300x600)</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -83,6 +100,17 @@
         <div class="menu-item" onclick="logout()">Logout</div>
       </div>
       <div id="history-list" class="history-list hidden"></div>
+    </div>
+  </div>
+
+  <div id="interest-popup" class="modal hidden">
+    <div class="modal-content">
+      <h2>Add Interests</h2>
+      <p>Add up to 5 interests (max 40 characters each)</p>
+      <input type="text" id="interest-input" placeholder="Type an interest..." maxlength="40">
+      <button onclick="addInterest()" class="primary-btn">Add</button>
+      <button onclick="closeInterestPopup()" class="secondary-btn">Done</button>
+      <div id="current-interests" class="current-interests"></div>
     </div>
   </div>
 
