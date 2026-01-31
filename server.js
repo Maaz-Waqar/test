@@ -23,8 +23,17 @@ io.on('connection', (socket) => {
   socket.on('find-partner', (username) => {
     socket.username = username || 'Stranger';
     
+    // Filter out the user themselves from waiting list
+    waitingUsers = waitingUsers.filter(user => user.id !== socket.id);
+    
     if (waitingUsers.length > 0) {
       const partner = waitingUsers.shift();
+      
+      // Don't match with yourself
+      if (partner.id === socket.id) {
+        socket.emit('waiting');
+        return;
+      }
       
       const roomId = `${socket.id}-${partner.id}`;
       socket.join(roomId);
