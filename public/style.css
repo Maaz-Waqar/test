@@ -760,11 +760,17 @@ input[type="text"]:focus {
   }
   
   .message {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
+    margin-right: 65px;
   }
   
   .message .text {
     font-size: 13px;
+  }
+  
+  .message .timestamp {
+    font-size: 8px;
+    right: -58px;
   }
   
   .waiting-area {

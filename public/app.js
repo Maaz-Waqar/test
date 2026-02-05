@@ -185,23 +185,23 @@ function connectToServer() {
     disableChat();
     
     if (autoFindNext) {
-      updateStatus('Finding next partner...');
+      updateHeaderInfo(null, true);
+      clearMessages();
+      showWaitingArea();
       setTimeout(() => {
-        clearMessages();
-        showWaitingArea();
-        socket.emit('find-partner', currentUsername);
-      }, 1500);
+        socket.emit('find-partner', { username: currentUsername, interests: interests });
+      }, 500);
     } else {
-      updateStatus('Partner left. Click Skip to find another.');
+      updateHeaderInfo(null, true);
     }
   });
   
   socket.on('partner-away', () => {
-    addSystemMessage('Partner went offline (switched tab or lost connection)');
+    addSystemMessage('Partner went offline');
   });
   
   socket.on('partner-back', () => {
-    addSystemMessage('Partner is back online');
+    addSystemMessage('Partner came online');
   });
   
   socket.on('skipped', () => {
@@ -397,12 +397,13 @@ function toggleAutoFind() {
 
 function updateHeaderInfo(partnerName, isWaiting = false, mutualInterests = []) {
   if (isWaiting) {
-    document.getElementById('header-username').textContent = 'Looking for partner...';
-    document.getElementById('header-status').textContent = 'Searching for someone to chat with';
+    document.getElementById('header-username').textContent = 'Looking for someone';
+    document.getElementById('header-status').textContent = 'Add interests to match like minded people';
   } else {
     document.getElementById('header-username').textContent = partnerName || 'Username';
     if (mutualInterests.length > 0) {
-      document.getElementById('header-status').textContent = `Matched with Interest: ${mutualInterests.join(', ')}`;
+      const interestWord = mutualInterests.length > 1 ? 'Interests' : 'Interest';
+      document.getElementById('header-status').textContent = `Matched with ${interestWord}: ${mutualInterests.join(', ')}`;
     } else {
       document.getElementById('header-status').textContent = 'Matched Randomly';
     }
@@ -456,14 +457,19 @@ function addMessage(text, type, sender) {
   
   const headerEl = document.createElement('div');
   headerEl.className = 'message-header';
-  headerEl.innerHTML = `<span class="sender">${sender}</span><span class="timestamp">${timeStr}</span>`;
+  headerEl.innerHTML = `<span class="sender">${sender}</span>`;
   
   const textEl = document.createElement('div');
   textEl.className = 'text';
   textEl.textContent = text;
   
+  const timestampEl = document.createElement('div');
+  timestampEl.className = 'timestamp';
+  timestampEl.textContent = timeStr;
+  
   messageEl.appendChild(headerEl);
   messageEl.appendChild(textEl);
+  messageEl.appendChild(timestampEl);
   messagesDiv.appendChild(messageEl);
   
   // Auto-scroll to bottom
